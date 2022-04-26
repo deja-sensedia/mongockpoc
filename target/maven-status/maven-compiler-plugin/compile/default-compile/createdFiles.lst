@@ -1,0 +1,3 @@
+com/sensedia/mongockpoc/MongockPocApplication.class
+com/sensedia/mongockpoc/MongockConfig.class
+com/sensedia/mongockpoc/changelogs/MyMigrationChangeUnit.class

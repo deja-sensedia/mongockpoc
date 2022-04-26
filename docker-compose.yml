@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+
+  mongockpoc_app:
+    container_name: mongockpoc_app
+    image: app
+    command: [
+      "./wait-for-it.sh", "mongockpoc_db:27017", "-t", "30",
+      "--",
+      "java", "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n", "-jar", "mongockpoc.jar"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - mongockpoc_db
+    environment:
+      PORT: 8080
+      DB_HOST: mongockpoc_db
+      DB_PORT: 27017
+      DB_NAME: mongockpoc
+      DB_USERNAME: root
+      DB_PASSWORD: example
+      JVM_OPT: -agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    networks:
+      - mongockpoc
+
+  mongockpoc_db:
+    container_name: mongockpoc_db
+    image: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=mongockpoc
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    ports:
+      - "27017:27017"
+    restart: always
+    networks:
+      - mongockpoc
+
+networks:
+  mongockpoc:
